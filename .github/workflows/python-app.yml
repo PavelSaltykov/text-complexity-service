@@ -32,5 +32,6 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        if [ -f ./src/tests/requirements.txt ]; then pip install -r src.tests.requirements.txt; fi
+        test_requirements_file="./src/tests/requirements.txt"
+        if [ -f $test_requirements_file ]; then pip install -r $test_requirements_file; fi
         pytest
