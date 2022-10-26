@@ -10,7 +10,9 @@ class ConllConverter:
         if lang not in ConllConverter.supported_languages():
             raise ValueError("Unsupported language")
 
-        self.nlp = init_parser(ConllConverter._spacy_models[lang], "spacy")
+        self.nlp = init_parser(ConllConverter._spacy_models[lang],
+                               "spacy",
+                               conversion_maps={"deprel": {"ROOT": "root"}})
 
     def text2conll_str(self, text: str) -> str:
         doc = self.nlp(text)
