@@ -21,3 +21,8 @@ class ConllConverter:
     @staticmethod
     def supported_languages() -> list[str]:
         return list(ConllConverter._spacy_models.keys())
+
+    @staticmethod
+    def all_language_converters() -> dict[str, 'ConllConverter']:
+        languages = ConllConverter.supported_languages()
+        return dict(zip(languages, map(ConllConverter, languages)))
