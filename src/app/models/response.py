@@ -9,7 +9,6 @@ class MeasureResult(BaseModel):
 
 
 class SentenceMeasuresResponse(BaseModel):
-    id: str
+    id: int
     measures: list[MeasureResult] = []
     error: Optional[str] = None
-

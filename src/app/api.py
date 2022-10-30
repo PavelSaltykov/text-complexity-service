@@ -3,13 +3,19 @@ from fastapi.responses import ORJSONResponse
 
 from src.app import measure_calculator
 from src.app.conll_converter import ConllConverter
-from src.app.measure_calculator import SentenceMeasure
+from src.app.measure import SentenceMeasures
 from src.app.models.request import SentenceMeasuresRequest
 from src.app.models.response import SentenceMeasuresResponse, MeasureResult
 
 app = FastAPI(title="text-complexity-service", default_response_class=ORJSONResponse)
 
-conll_converters = ConllConverter.all_language_converters()
+conll_converters = {}
+
+
+@app.on_event("startup")
+async def startup_event():
+    for lang, conv in ConllConverter.all_language_converters().items():
+        conll_converters[lang] = conv
 
 
 @app.get("/", include_in_schema=False)
@@ -32,7 +38,7 @@ async def sentences_measures(body: list[SentenceMeasuresRequest]):
             continue
 
         conll_sentence = conll_sentences[0]
-        calculated_measures = [measure_calculator.calculate_for_sentence(conll_sentence, m) for m in SentenceMeasure]
+        calculated_measures = [measure_calculator.calculate_for_sentence(conll_sentence, m) for m in SentenceMeasures]
         calculated_measures = [MeasureResult(name=res[0], value=res[1])
                                for res in calculated_measures if res is not None]
         response.append(SentenceMeasuresResponse(id=item.id, measures=calculated_measures))

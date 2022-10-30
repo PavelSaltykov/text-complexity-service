@@ -2,6 +2,6 @@ from pydantic import BaseModel
 
 
 class SentenceMeasuresRequest(BaseModel):
-    id: str
+    id: int
     sentence: str
     language: str

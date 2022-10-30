@@ -19,7 +19,8 @@ def test_supported_languages():
 
 
 def test_text2conll_str():
-    text = "Простой текст для проверки."
+    text = "Обработка текстов на естественном языке — общее направление искусственного интеллекта " \
+           "и математической лингвистики."
     converter = ConllConverter("ru")
     conll = converter.text2conll_str(text)
 
@@ -27,9 +28,9 @@ def test_text2conll_str():
     assert len(sentences) == 1
 
     sentence = sentences[0]
-    assert len(sentence) == 5
+    assert len(sentence) == 14
 
-    expected_ids = list(range(1, 6))
+    expected_ids = list(range(1, 15))
     actual_ids = [token['id'] for token in sentence]
     assert actual_ids == expected_ids
 
