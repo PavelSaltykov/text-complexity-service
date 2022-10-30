@@ -1,10 +1,10 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from fastapi.responses import ORJSONResponse
 
 from src.app import measure_calculator
 from src.app.conll_converter import ConllConverter
 from src.app.measure import SentenceMeasures
-from src.app.models.request import SentenceMeasuresRequest
+from src.app.models.request import SentenceMeasuresRequest, MeasureName
 from src.app.models.response import SentenceMeasuresResponse, MeasureResult
 
 app = FastAPI(title="text-complexity-service", default_response_class=ORJSONResponse)
@@ -23,9 +23,13 @@ async def openapi():
     return app.openapi()
 
 
-@app.post("/sentences_measures", response_model=list[SentenceMeasuresResponse])
-async def sentences_measures(body: list[SentenceMeasuresRequest]):
+@app.post("/sentence_measures", response_model=list[SentenceMeasuresResponse])
+async def sentences_measures(body: list[SentenceMeasuresRequest], measure: list[MeasureName] | None = Query(default=None)):
     response = []
+    if not measure:
+        measure = [m for m in MeasureName]
+    measure = [SentenceMeasures[m] for m in measure]
+
     for item in body:
         if not item.sentence.strip():
             response.append(SentenceMeasuresResponse(id=item.id, error="Empty sentence"))
@@ -38,7 +42,7 @@ async def sentences_measures(body: list[SentenceMeasuresRequest]):
 
         conll_sentence = conll_sentences[0]
         calculated_measures = [(m.name, measure_calculator.calculate_for_sentence(conll_sentence, m))
-                               for m in SentenceMeasures]
+                               for m in measure]
         calculated_measures = [MeasureResult(name=res[0], value=res[1]) for res in calculated_measures]
         response.append(SentenceMeasuresResponse(id=item.id, measures=calculated_measures))
     return response

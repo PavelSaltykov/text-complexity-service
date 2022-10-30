@@ -25,4 +25,4 @@ class ConllConverter:
     @staticmethod
     def all_language_converters() -> dict[str, 'ConllConverter']:
         languages = ConllConverter.supported_languages()
-        return dict([(l, ConllConverter(l)) for l in languages])
+        return dict([(lang, ConllConverter(lang)) for lang in languages])

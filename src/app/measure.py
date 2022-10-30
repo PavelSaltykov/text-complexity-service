@@ -10,7 +10,7 @@ class MeasureType(Enum):
 
 
 class Measure(NamedTuple):
-    name: str
+    text_name: str
     type: MeasureType
     func: Callable
 
