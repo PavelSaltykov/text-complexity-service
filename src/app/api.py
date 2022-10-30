@@ -27,19 +27,18 @@ async def openapi():
 async def sentences_measures(body: list[SentenceMeasuresRequest]):
     response = []
     for item in body:
-        if item.language not in ConllConverter.supported_languages():
-            response.append(SentenceMeasuresResponse(id=item.id, error="Unsupported language"))
+        if not item.sentence.strip():
+            response.append(SentenceMeasuresResponse(id=item.id, error="Empty sentence"))
             continue
 
         conll_sentences = conll_converters[item.language].text2conll_str(item.sentence).split("\n\n")
-        conll_sentences = list(filter(None, conll_sentences))
         if len(conll_sentences) != 1:
             response.append(SentenceMeasuresResponse(id=item.id, error="Required one sentence"))
             continue
 
         conll_sentence = conll_sentences[0]
-        calculated_measures = [measure_calculator.calculate_for_sentence(conll_sentence, m) for m in SentenceMeasures]
-        calculated_measures = [MeasureResult(name=res[0], value=res[1])
-                               for res in calculated_measures if res is not None]
+        calculated_measures = [(m.name, measure_calculator.calculate_for_sentence(conll_sentence, m))
+                               for m in SentenceMeasures]
+        calculated_measures = [MeasureResult(name=res[0], value=res[1]) for res in calculated_measures]
         response.append(SentenceMeasuresResponse(id=item.id, measures=calculated_measures))
     return response

@@ -1,5 +1,7 @@
 import os
 
+import pytest
+
 from src.app import measure_calculator as mc
 from src.app.measure import SentenceMeasures
 from src.tests import config
@@ -13,4 +15,7 @@ def test_measure_calculator():
         conll_sentence = f.read()
 
     for measure in SentenceMeasures:
-        assert mc.calculate_for_sentence(conll_sentence, measure)[0] == measure.name
+        try:
+            _ = mc.calculate_for_sentence(conll_sentence, measure)
+        except (ZeroDivisionError, ValueError):
+            pytest.fail("Unexpected Error")

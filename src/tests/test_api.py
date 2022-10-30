@@ -33,6 +33,10 @@ def test_one_sentence_measures_post():
         measures = first_obj["measures"]
         assert isinstance(measures, list) and len(measures) == len(SentenceMeasures)
 
+        actual_names = [m["name"] for m in measures]
+        expected_names = [m.value.name for m in SentenceMeasures]
+        assert all([a == b for a, b in zip(sorted(actual_names), sorted(expected_names))])
+
 
 def test_many_sentences_measures_post():
     with TestClient(app) as client:
@@ -48,19 +52,10 @@ def test_many_sentences_measures_post():
             assert item["error"] is None
 
 
-def test_unsupported_language():
-    with TestClient(app) as client:
-        unsupported_language = "en"
-        body = [SentenceMeasuresRequest(id=0, sentence=test_sentence, language=unsupported_language).dict()]
-        response = client.post("/sentences_measures", json=body)
-
-        assert response.status_code == status.HTTP_200_OK
-        assert response.json()[0]["error"] is not None
-
-
 def test_empty_sentence():
     with TestClient(app) as client:
-        body = [SentenceMeasuresRequest(id=0, sentence="", language="ru").dict()]
+        empty_sentences = ["", " "]
+        body = [SentenceMeasuresRequest(id=i, sentence=s, language="ru").dict() for i, s in enumerate(empty_sentences)]
         response = client.post("/sentences_measures", json=body)
 
         assert response.status_code == status.HTTP_200_OK
