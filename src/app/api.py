@@ -24,7 +24,7 @@ async def openapi():
 
 
 @app.post("/sentence_measures", response_model=list[SentenceMeasuresResponse])
-async def sentences_measures(body: list[SentenceMeasuresRequest], measure: list[MeasureName] | None = Query(default=None)):
+async def sentences_measures(body: list[SentenceMeasuresRequest], measure: set[MeasureName] = Query(default=None)):
     response = []
     if not measure:
         measure = [m for m in MeasureName]
