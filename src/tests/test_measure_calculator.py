@@ -11,7 +11,7 @@ def test_measure_calculator():
     conll_file = "conll_sentence.txt"
     conll_file_path = os.path.join(config.resource_folder, conll_file)
 
-    with open(conll_file_path) as f:
+    with open(conll_file_path, encoding='utf-8') as f:
         conll_sentence = f.read()
 
     for measure in SentenceMeasures:
