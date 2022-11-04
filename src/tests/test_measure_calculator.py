@@ -17,5 +17,5 @@ def test_measure_calculator():
     for measure in SentenceMeasures:
         try:
             _ = mc.calculate_for_sentence(conll_sentence, measure)
-        except (ZeroDivisionError, ValueError):
+        except:
             pytest.fail("Unexpected Error")

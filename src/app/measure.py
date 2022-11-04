@@ -1,12 +1,14 @@
 from enum import Enum
 from typing import Callable, NamedTuple
 
-from textcomplexity import surface, dependency
+from textcomplexity import surface, dependency, sentence
 
 
 class MeasureType(Enum):
-    text = 1
-    graph = 2
+    text = 0
+    sentence = 1
+    punctuation = 2
+    graph = 3
 
 
 class Measure(NamedTuple):
@@ -16,8 +18,6 @@ class Measure(NamedTuple):
 
 
 class SentenceMeasures(Measure, Enum):
-    text_length_tokens = "text length (tokens)", MeasureType.text, surface.text_length_tokens
-    text_length_characters = "text length (characters)", MeasureType.text, surface.text_length_characters
     type_token_ratio = "type-token ratio", MeasureType.text, surface.type_token_ratio
     guiraud_r = "Guiraud's R", MeasureType.text, surface.guiraud_r
     herdan_c = "Herdan's C", MeasureType.text, surface.herdan_c
@@ -41,6 +41,13 @@ class SentenceMeasures(Measure, Enum):
     average_token_length = "average token length", MeasureType.text, surface.average_token_length
     orlov_z = "Orlov's Z", MeasureType.text, surface.orlov_z
     mtld = "MTLD", MeasureType.text, surface.mtld
+
+    sentence_length_tokens = "sentence length (tokens)", MeasureType.sentence, sentence._sentence_length_tokens
+    sentence_length_characters = ("sentence length (characters)", MeasureType.sentence,
+                                  sentence._sentence_length_characters)
+
+    sentence_length_words = "sentence length (words)", MeasureType.punctuation, sentence._sentence_length_words
+    punctuation_per_sentence = "punctuation per sentence", MeasureType.punctuation, sentence._punctuation_per_sentence
 
     average_dependency_distance = ("average dependency distance", MeasureType.graph,
                                    dependency._average_dependency_distance)
